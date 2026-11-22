@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:,">
+<title>Science Quiz Game — Can You Beat It?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Manrope:wght@500;600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f6f0; --surface:#ffffff; --surface2:#eef2e8; --ink:#101812; --muted:#5a6b5e; --line:#dce3d6;
+  --teal:#0e7a6b; --teal-dark:#0a5e53; --amber:#ffb703; --amber-dark:#e69c00; --red:#e63946; --green:#1a9e54;
+  --card-shadow:0 10px 30px rgba(16,24,18,.08);
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#0d1310; --surface:#151d18; --surface2:#1c2720; --ink:#eef3ec; --muted:#9aaca0; --line:#2a3a30; --card-shadow:0 10px 30px rgba(0,0,0,.35); }
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:"Manrope",system-ui,sans-serif;line-height:1.5;-webkit-tap-highlight-color:transparent}
+a{color:inherit}
+button{font-family:inherit;cursor:pointer;min-height:44px}
+.wrap{max-width:880px;margin:0 auto;padding:0 16px 40px}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:14px 0 6px;gap:12px}
+.logo{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;letter-spacing:-.02em;font-size:19px;display:flex;align-items:center;gap:9px}
+.logo-badge{width:36px;height:36px;background:var(--teal);color:#fff;display:grid;place-items:center;border-radius:10px;font-size:19px}
+.logo small{display:block;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.pill{font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:700;background:var(--surface);border:1px solid var(--line);padding:8px 12px;border-radius:999px;white-space:nowrap}
+.hero{padding:18px 0 8px}
+.eyebrow{display:inline-flex;gap:8px;align-items:center;background:#fff3c4;color:#6b4e00;border:1px solid #ffe08a;padding:6px 12px;border-radius:999px;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+@media(prefers-color-scheme:dark){.eyebrow{background:#2e270f;color:#ffd94d;border-color:#4a3f16}}
+h1{font-family:"Bricolage Grotesque",sans-serif;font-size:clamp(38px,8vw,64px);line-height:.95;letter-spacing:-.03em;margin:16px 0 12px;font-weight:800}
+h1 em{font-style:normal;color:var(--teal);background:linear-gradient(transparent 62%, var(--amber) 62%)}
+.sub{font-size:17px;color:var(--muted);max-width:620px;margin:0}
+.stats-row{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0 6px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;min-width:108px;flex:1}
+.stat b{display:block;font-family:"Bricolage Grotesque",sans-serif;font-size:22px;line-height:1}
+.stat span{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.section-title{font-family:"Bricolage Grotesque",sans-serif;font-size:22px;margin:26px 0 12px;letter-spacing:-.02em}
+.cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:560px){.cat-grid{grid-template-columns:1fr}}
+.cat{ text-align:left;background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:16px;display:flex;gap:14px;align-items:flex-start;transition:.15s;width:100%}
+.cat:hover{border-color:var(--teal);transform:translateY(-1px)}
+.cat.selected{border-color:var(--teal);background:var(--surface2);box-shadow:var(--card-shadow)}
+.cat-icon{width:48px;height:48px;border-radius:12px;display:grid;place-items:center;font-size:24px;flex-shrink:0}
+.cat h3{margin:0;font-size:16px}
+.cat p{margin:3px 0 0;color:var(--muted);font-size:13.5px;line-height:1.4}
+.cat .count{margin-left:auto;font-family:"JetBrains Mono",monospace;font-size:11px;background:var(--surface2);border:1px solid var(--line);padding:4px 7px;border-radius:999px;white-space:nowrap}
+.play-bar{position:sticky;bottom:14px;margin-top:18px;background:var(--ink);color:var(--bg);border-radius:16px;padding:12px;display:flex;gap:12px;align-items:center;box-shadow:0 16px 36px rgba(0,0,0,.22);z-index:5}
+.play-bar p{margin:0;font-size:13px;opacity:.85;line-height:1.35;flex:1}
+.btn{border:0;border-radius:12px;padding:0 20px;font-weight:800;font-size:15px;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;min-height:48px}
+.btn-primary{background:var(--amber);color:#1a1400}
+.btn-primary:active{transform:scale(.98)}
+.btn-teal{background:var(--teal);color:#fff}
+.btn-ghost{background:var(--surface);color:var(--ink);border:1px solid var(--line)}
+.btn-block{width:100%}
+.how{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+@media(max-width:640px){.how{grid-template-columns:1fr}}
+.how div{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px}
+.how b{font-size:14px}
+.how p{margin:4px 0 0;font-size:13px;color:var(--muted)}
+.channel{margin-top:22px;background:var(--teal);color:#fff;border-radius:20px;padding:20px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.channel h3{margin:0;font-family:"Bricolage Grotesque",sans-serif;font-size:20px}
+.channel p{margin:4px 0 0;opacity:.9;font-size:14px;max-width:520px}
+.channel .btn{background:#fff;color:#0a3d36;margin-left:auto}
+@media(max-width:560px){.channel .btn{margin-left:0;width:100%}}
+
+/* QUIZ */
+.view{display:none}.view.active{display:block}
+.quiz-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:10px 0 12px;flex-wrap:wrap}
+.qmeta{font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.timer-wrap{height:10px;background:var(--surface2);border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.timer-bar{height:100%;background:var(--teal);width:100%;transition:width 1s linear, background .3s}
+.timer-bar.low{background:var(--red)}
+.dots{display:flex;gap:6px;margin:12px 0}
+.dot{width:100%;height:6px;border-radius:999px;background:var(--line)}
+.dot.done{background:var(--teal)}.dot.current{background:var(--amber)}.dot.wrong{background:var(--red)}
+.qcard{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:var(--card-shadow);margin-top:14px}
+.qtag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;background:var(--surface2);border:1px solid var(--line);padding:6px 10px;border-radius:999px}
+.qtext{font-family:"Bricolage Grotesque",sans-serif;font-size:clamp(22px,4.5vw,30px);line-height:1.15;letter-spacing:-.02em;margin:14px 0 18px}
+.opts{display:grid;gap:10px}
+.opt{width:100%;text-align:left;background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:14px 16px;font-weight:700;font-size:16px;display:flex;gap:12px;align-items:center;line-height:1.3}
+.opt .letter{width:32px;height:32px;border-radius:9px;background:var(--surface2);border:1px solid var(--line);display:grid;place-items:center;font-family:"JetBrains Mono",monospace;font-size:13px;flex-shrink:0}
+.opt:hover{border-color:var(--teal)}
+.opt.correct{border-color:var(--green);background:#e8f7ee;color:#0b4d26}
+@media(prefers-color-scheme:dark){.opt.correct{background:#123324;color:#b7f0cd}}
+.opt.wrong{border-color:var(--red);background:#fdecec;color:#7a121c}
+@media(prefers-color-scheme:dark){.opt.wrong{background:#3a1518;color:#ffc4c8}}
+.opt:disabled{cursor:default;opacity:1}
+.fact{margin-top:16px;border-radius:14px;padding:14px 16px;background:#fff8d6;border:1px solid #ffe08a;color:#4a3800;font-size:14.5px;line-height:1.5;display:none}
+@media(prefers-color-scheme:dark){.fact{background:#2e270f;color:#ffe98a;border-color:#5a4a16}}
+.fact.show{display:block}
+.fact b{display:block;font-size:12px;letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px}
+.next-row{margin-top:16px;display:none}.next-row.show{display:block}
+.score-pop{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:13px;color:var(--teal)}
+
+/* RESULT */
+.result-hero{text-align:center;padding:28px 16px 8px}
+.trophy{font-size:56px;line-height:1}
+.result-hero h2{font-family:"Bricolage Grotesque",sans-serif;font-size:clamp(30px,6vw,44px);margin:10px 0 6px;letter-spacing:-.02em}
+.rank{display:inline-block;background:var(--amber);color:#1a1400;font-weight:800;padding:7px 14px;border-radius:999px;font-size:13px;letter-spacing:.04em;text-transform:uppercase}
+.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0}
+@media(max-width:560px){.result-grid{grid-template-columns:1fr 1fr}}
+.result-actions{display:grid;gap:10px;margin-top:14px}
+.share-box{background:var(--surface);border:1px dashed var(--line);border-radius:16px;padding:16px;text-align:center}
+.share-box p{margin:0 0 10px;font-size:14px;color:var(--muted)}
+.toast{position:fixed;left:50%;transform:translateX(-50%) translateY(20px);bottom:20px;background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:999px;font-weight:700;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:20;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+footer{margin-top:28px;text-align:center;color:var(--muted);font-size:13px;line-height:1.6}
+footer a{font-weight:800;color:var(--teal);text-decoration:none}
+canvas#confetti{position:fixed;inset:0;pointer-events:none;z-index:30}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<div class="wrap">
+  <div class="topbar">
+    <div class="logo"><span class="logo-badge">⚗️</span><span>Science Quiz<small>By Morrow Studio</small></span></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+      <span class="pill" id="bestPill">🏆 Best: 0</span>
+      <span class="pill" id="streakPill">🔥 Streak: 0</span>
+    </div>
+  </div>
+
+  <!-- START VIEW -->
+  <section id="view-start" class="view" style="display:none">
+    <div class="hero">
+      <span class="eyebrow">⏱️ 10 questions • 20 seconds each</span>
+      <h1>Think you know science? <em>Prove it.</em></h1>
+      <p class="sub">Accidental inventions, weird human body facts, space mysteries — the same kind of stories we turn into videos on Morrow Studio. Pick a topic, beat the clock, and climb from Lab Rat to Einstein.</p>
+      <div class="stats-row">
+        <div class="stat"><b>40</b><span>Questions</span></div>
+        <div class="stat"><b>20s</b><span>Per question</span></div>
+        <div class="stat"><b>5</b><span>Topics</span></div>
+        <div class="stat"><b>Free</b><span>No sign-up</span></div>
+      </div>
+    </div>
+
+    <h2 class="section-title">Choose your topic</h2>
+    <div class="cat-grid" id="catGrid"></div>
+
+    <div class="play-bar">
+      <p><strong id="selectedLabel">Mixed Bag selected</strong><br>Fast answers earn bonus points. Streaks multiply your score.</p>
+      <button class="btn btn-primary" id="startBtn">▶ Start Quiz</button>
+    </div>
+
+    <h2 class="section-title">How scoring works</h2>
+    <div class="how">
+      <div><b>⚡ Speed bonus</b><p>Answer fast and you keep more of the 100 points for that question. Let the timer run out and it's gone.</p></div>
+      <div><b>🔥 Streak bonus</b><p>Every correct answer in a row adds +10. Three in a row and the questions start feeling easy — until they don't.</p></div>
+      <div><b>💡 Learn the story</b><p>Every answer reveals the real story behind it — like how Velcro came from a dog walk, or why your voice sounds strange on a recording.</p></div>
+    </div>
+
+    <div class="channel">
+      <div style="font-size:34px">▶️</div>
+      <div style="flex:1;min-width:220px">
+        <h3>Love these stories? Watch them animated.</h3>
+        <p>Morrow Studio makes short 3D stickman science videos — inventions, accidents and ideas that changed the world.</p>
+      </div>
+      <a class="btn" href="https://www.youtube.com/channel/UClAHwHmjCctJJ40de538Pvw" target="_blank" rel="noopener">Watch on YouTube →</a>
+    </div>
+  </section>
+
+  <!-- QUIZ VIEW -->
+  <section id="view-quiz" class="view">
+    <div class="quiz-head">
+      <span class="qmeta" id="qCounter">Question 1 / 10</span>
+      <span class="pill" id="liveScore">Score: 0</span>
+      <span class="pill" id="liveStreak">🔥 0</span>
+      <span class="pill" id="timerText">⏱️ 20s</span>
+    </div>
+    <div class="timer-wrap"><div class="timer-bar" id="timerBar"></div></div>
+    <div class="dots" id="dots"></div>
+    <div class="qcard">
+      <span class="qtag" id="qTag">Science</span>
+      <div class="qtext" id="qText"></div>
+      <div class="opts" id="opts"></div>
+      <div class="fact" id="factBox"><b>💡 The real story</b><span id="factText"></span></div>
+      <div class="next-row" id="nextRow">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+          <span class="score-pop" id="scorePop"></span>
+          <button class="btn btn-teal" id="nextBtn">Next Question →</button>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-ghost btn-block" id="quitBtn" style="margin-top:14px">Quit quiz</button>
+  </section>
+
+  <!-- RESULT VIEW -->
+  <section id="view-result" class="view">
+    <div class="result-hero">
+      <div class="trophy" id="trophy">🏆</div>
+      <h2 id="resultTitle">Quiz Complete!</h2>
+      <span class="rank" id="rankLabel">Science Explorer</span>
+      <p style="color:var(--muted);max-width:520px;margin:12px auto 0" id="resultMsg"></p>
+    </div>
+    <div class="result-grid">
+      <div class="stat" style="text-align:center"><b id="finalScore">0</b><span>Final Score</span></div>
+      <div class="stat" style="text-align:center"><b id="finalCorrect">0/10</b><span>Correct</span></div>
+      <div class="stat" style="text-align:center"><b id="finalStreak">0</b><span>Best Streak</span></div>
+    </div>
+    <div class="share-box">
+      <p id="shareText">I scored 0 in the Science Quiz Game! Can you beat me?</p>
+      <button class="btn btn-teal" id="copyBtn">📋 Copy My Score & Challenge Friends</button>
+    </div>
+    <div class="result-actions">
+      <button class="btn btn-primary btn-block" id="againBtn">↻ Play Again — New Questions</button>
+      <button class="btn btn-ghost btn-block" id="changeBtn">Change Topic</button>
+      <a class="btn btn-ghost btn-block" href="https://www.youtube.com/channel/UClAHwHmjCctJJ40de538Pvw" target="_blank" rel="noopener" style="border-color:var(--teal);color:var(--teal)">▶ Watch Morrow Studio on YouTube</a>
+    </div>
+  </section>
+
+  <footer>
+    Made by <a href="https://www.youtube.com/channel/UClAHwHmjCctJJ40de538Pvw" target="_blank" rel="noopener">Morrow Studio</a> — 3D science stories, every day.<br>
+    Free to play. No account, no download.
+  </footer>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+var QUESTIONS = [
+ // INVENTIONS
+ {cat:"inventions", q:"Velcro was inspired by what stuck to an engineer's dog?", opts:["Mud","Burrs from a plant","Tree sap","Spider webs"], a:1, fact:"In 1941 Swiss engineer George de Mestral found burrs clinging to his dog's fur. Under a microscope he saw tiny hooks — and copied them to invent Velcro."},
+ {cat:"inventions", q:"The microwave oven was discovered after what melted in a scientist's pocket?", opts:["A candle","A chocolate bar","A rubber glove","Chewing gum"], a:1, fact:"In 1945 Percy Spencer was working on radar when a chocolate bar in his pocket melted. He realised microwaves could cook food — fast."},
+ {cat:"inventions", q:"Super Glue was first discovered while trying to make what?", opts:["Aircraft glue","Clear plastic gun sights","Bandages","Paint"], a:1, fact:"In 1942 Harry Coover was trying to make clear plastic gun sights. The sticky mess he created was useless then — years later it became Super Glue."},
+ {cat:"inventions", q:"Safety glass was invented after a flask fell and did NOT shatter. What was inside it?", opts:["Water","A plastic-like coating (celluloid)","Oil","Sand"], a:1, fact:"French chemist Édouard Bénédictus dropped a flask coated inside with dried celluloid. It cracked but held together — the idea behind laminated safety glass."},
+ {cat:"inventions", q:"Potato chips were invented because a customer kept complaining his fries were…?", opts:["Too salty","Too thick and soggy","Too cold","Too spicy"], a:1, fact:"In 1853 chef George Crum sliced potatoes paper-thin and fried them crisp to annoy a picky customer. The customer loved them."},
+ {cat:"inventions", q:"Penicillin, the first antibiotic, was discovered from what?", opts:["Tree bark","Mould growing in a dish","Seaweed","Volcanic ash"], a:1, fact:"In 1928 Alexander Fleming noticed mould had killed bacteria around it in a forgotten petri dish. That mould became penicillin and saved millions of lives."},
+ {cat:"inventions", q:"The first popsicle was invented by an 11-year-old who left what outside overnight?", opts:["Lemonade with a stick in it","A bowl of milk","Melted ice cream","Orange juice in a bottle"], a:0, fact:"In 1905 Frank Epperson left soda powder and water with a stirring stick on his porch on a freezing night. The next morning: the first popsicle."},
+ {cat:"inventions", q:"X-rays were discovered when Wilhelm Röntgen noticed a screen doing what in the dark?", opts:["Melting","Glowing","Singing","Freezing"], a:1, fact:"In 1895 Röntgen saw a fluorescent screen glow even though his tube was covered. The mysterious rays could pass through flesh but not bone."},
+ {cat:"inventions", q:"Silly Putty started as a failed attempt to make what during WWII?", opts:["Synthetic rubber","Waterproof paint","Aircraft tyres","Glue"], a:0, fact:"In 1943 engineer James Wright mixed boric acid with silicone oil hunting for synthetic rubber. The bouncy goo failed as rubber — but became a classic toy."},
+ {cat:"inventions", q:"Coca-Cola was originally sold as what?", opts:["A floor cleaner","A medicine / tonic","Baby food","Mouthwash"], a:1, fact:"Pharmacist John Pemberton launched Coca-Cola in 1886 as a tonic drink sold at a pharmacy soda fountain in Atlanta."},
+ // SPACE
+ {cat:"space", q:"How long does sunlight take to reach Earth?", opts:["About 8 seconds","About 8 minutes","About 1 hour","Instantly"], a:1, fact:"Light travels at 300,000 km per second, but the Sun is 150 million km away — so the sunlight you feel left the Sun about 8 minutes ago."},
+ {cat:"space", q:"Which planet spins on its side, almost like a rolling ball?", opts:["Mars","Jupiter","Uranus","Mercury"], a:2, fact:"Uranus is tilted about 98 degrees, probably after a huge ancient collision. Its seasons each last about 21 years."},
+ {cat:"space", q:"What is the hottest planet in our solar system?", opts:["Mercury","Mars","Venus","Jupiter"], a:2, fact:"Venus is hotter than Mercury even though it's farther from the Sun. Its thick CO₂ atmosphere traps heat like a greenhouse — about 465°C."},
+ {cat:"space", q:"A day on Venus is longer than…?", opts:["A day on Earth","Its own year","A month on Earth","A day on Mars"], a:1, fact:"Venus spins so slowly that one full day there lasts 243 Earth days — longer than the 225 days it takes to orbit the Sun."},
+ {cat:"space", q:"Neutron stars are so dense that a teaspoon of one would weigh about…?", opts:["1 kilogram","A car","A billion tons","An elephant"], a:2, fact:"Neutron stars pack more mass than the Sun into a ball about 20 km wide. A teaspoon would weigh roughly a billion tons."},
+ {cat:"space", q:"Which moon in our solar system has active volcanoes?", opts:["Earth's Moon","Titan","Io (moon of Jupiter)","Europa"], a:2, fact:"Io is the most volcanically active body we know, with hundreds of volcanoes reshaping its yellow, pizza-like surface."},
+ {cat:"space", q:"How many Earths could fit inside the Sun?", opts:["About 1,300","About 13,000","About 1.3 million","About 130 million"], a:2, fact:"The Sun's volume is enormous — you could fit roughly 1.3 million Earths inside it."},
+ {cat:"space", q:"Footprints on the Moon will likely last millions of years because the Moon has no…?", opts:["Gravity","Wind or water to erase them","Sunlight","Dust"], a:1, fact:"With no atmosphere, there's no wind or rain on the Moon. Apollo footprints from 1969 are still there, almost unchanged."},
+ {cat:"space", q:"Which planet has the tallest volcano in the solar system, Olympus Mons?", opts:["Earth","Mars","Venus","Io"], a:1, fact:"Olympus Mons on Mars is about 22 km high — nearly three times Mount Everest — and about the size of France."},
+ {cat:"space", q:"What force keeps the International Space Station in orbit?", opts:["Engines firing constantly","Gravity — it is always falling around Earth","Magnets","Solar wind"], a:1, fact:"The ISS is in continuous free-fall. It moves sideways so fast (about 28,000 km/h) that as it falls, Earth curves away beneath it."},
+ // BODY
+ {cat:"body", q:"Why does your own voice sound strange on a recording?", opts:["Microphones change pitch","You normally hear it through your skull bones","Recordings are always slower","Your ears filter it out"], a:1, fact:"You hear your own voice partly through vibrations in your skull, which makes it sound deeper. A recording only has the air version — so it sounds higher and 'cringe'."},
+ {cat:"body", q:"How much of the human body is water?", opts:["About 20%","About 40%","About 60%","About 90%"], a:2, fact:"An adult body is roughly 60% water. Your brain and heart are about 73% water."},
+ {cat:"body", q:"Which is the strongest muscle in the human body by force?", opts:["Bicep","Heart","Jaw muscle (masseter)","Thigh"], a:2, fact:"Your jaw muscle can bite with a force of up to about 70 kg on the molars. It works every time you chew."},
+ {cat:"body", q:"How many bones does an adult human have?", opts:["106","206","306","406"], a:1, fact:"Babies are born with about 300 bones, but many fuse together as you grow, leaving 206 in an adult."},
+ {cat:"body", q:"Your nose can remember roughly how many different scents?", opts:["About 100","About 1,000","About 50,000","Over 1 trillion (study estimate)"], a:3, fact:"A famous 2014 study estimated humans can distinguish more than a trillion smells — far more than the old textbook figure of 10,000."},
+ {cat:"body", q:"How fast does a sneeze travel?", opts:["About 10 km/h","About 50 km/h","Up to about 160 km/h","Speed of sound"], a:2, fact:"A sneeze can blast out at up to roughly 160 km/h (100 mph). That's why covering it matters."},
+ {cat:"body", q:"Which human sense is directly linked to memory and emotion in the brain?", opts:["Sight","Smell","Taste","Touch"], a:1, fact:"Smell signals go straight to brain areas handling emotion and memory — which is why a smell can instantly bring back a childhood moment."},
+ {cat:"body", q:"How long are all the blood vessels in your body, stretched end to end?", opts:["About 1 km","About 100 km","About 10,000 km","About 100,000 km"], a:3, fact:"Laid end to end, your blood vessels would stretch roughly 100,000 km — enough to circle Earth more than twice."},
+ {cat:"body", q:"Goosebumps on humans are a leftover reflex that in furry animals does what?", opts:["Makes them sweat","Makes fur stand up to trap heat / look bigger","Helps them swim","Changes fur colour"], a:1, fact:"Tiny muscles pull each hair upright. In furry animals that traps warm air and makes them look bigger to predators. On us, it mostly just looks funny."},
+ {cat:"body", q:"About how often does your body replace the top layer of skin cells?", opts:["Every day","Every 2–4 weeks","Every year","Never"], a:1, fact:"You shed millions of skin cells daily and grow a fresh outer layer roughly every 2 to 4 weeks. A lot of house dust is old you."},
+ // WEIRD SCIENCE
+ {cat:"weird", q:"Honey found in ancient Egyptian tombs is still edible because honey…?", opts:["Was blessed","Almost never spoils","Turns to stone","Was frozen"], a:1, fact:"Honey is low in water and slightly acidic, so bacteria can't grow in it. Pots found in 3,000-year-old tombs were still perfectly edible."},
+ {cat:"weird", q:"Octopuses have how many hearts?", opts:["1","2","3","8"], a:2, fact:"An octopus has three hearts: two pump blood to the gills, and one pumps it around the body. Their blood is blue, too."},
+ {cat:"weird", q:"Bananas are slightly radioactive because they contain…?", opts:["Uranium","Potassium-40","Radium","Plutonium"], a:1, fact:"Bananas contain potassium, a tiny fraction of which is the radioactive isotope potassium-40. The dose is harmless — you'd need millions of bananas at once to matter."},
+ {cat:"weird", q:"What happens to hot water vs cold water in a freezer (Mpemba effect)?", opts:["Hot water can sometimes freeze faster","Cold always wins","They freeze identically","Hot water never freezes"], a:0, fact:"Under some conditions hot water freezes faster than cold — the Mpemba effect. Scientists still debate the exact mix of reasons."},
+ {cat:"weird", q:"A bolt of lightning is hotter than…?", opts:["A candle","The surface of the Sun","A volcano","An oven"], a:1, fact:"Lightning can heat the air around it to about 30,000 Kelvin — roughly five times hotter than the Sun's surface."},
+ {cat:"weird", q:"Wombat poop is famously shaped like…?", opts:["Spirals","Stars","Cubes","Balls"], a:2, fact:"Wombats produce cube-shaped droppings and stack them to mark territory. The shape forms inside their intestines."},
+ {cat:"weird", q:"Sea otters hold hands while sleeping so they don't…?", opts:["Get cold","Drift apart","Sink","Dream"], a:1, fact:"Otters hold paws and wrap themselves in kelp so currents don't separate them while they sleep."},
+ {cat:"weird", q:"How much DNA do humans share with bananas?", opts:["0%","About 10%","About 50-60%","About 99%"], a:2, fact:"Humans and bananas share roughly 50–60% of genes — the basic instructions for building cells are ancient and widely shared across life."},
+ {cat:"weird", q:"Mantis shrimp can punch with the force of what?", opts:["A falling feather","A bullet","A car crash","A sneeze"], a:1, fact:"A mantis shrimp's club accelerates faster than a speeding bullet and can crack aquarium glass. It also sees colours we can't even imagine."},
+ {cat:"weird", q:"What is special about the immortal jellyfish (Turritopsis dohrnii)?", opts:["It glows in the dark","It can restart its life cycle back to a baby form","It can fly above water","It lives for only one day"], a:1, fact:"When injured or old, this tiny jellyfish can revert its cells back to its polyp stage and start life again — potentially forever."}
+];
+
+var CATEGORIES = [
+ {id:"mix", name:"Mixed Bag", icon:"🎲", bg:"#e6f4f1", desc:"A bit of everything — inventions, space, body & weird science.", count:"10 random"},
+ {id:"inventions", name:"Accidental Inventions", icon:"💡", bg:"#fff3c4", desc:"Velcro, microwaves, Super Glue — genius ideas found by mistake.", count:"10 questions"},
+ {id:"space", name:"Space & Universe", icon:"🚀", bg:"#e3e9ff", desc:"Planets that roll, stars heavier than mountains, and Moon footprints.", count:"10 questions"},
+ {id:"body", name:"Human Body", icon:"🧠", bg:"#ffe8ec", desc:"Why your voice sounds cringe, sneeze speed, and 100,000 km of vessels.", count:"10 questions"},
+ {id:"weird", name:"Weird Science", icon:"🐙", bg:"#e8f7ee", desc:"Cube poop, 3-hearted octopuses, and honey that never spoils.", count:"10 questions"}
+];
+
+var state = { cat:"mix", questions:[], idx:0, score:0, correct:0, streak:0, bestStreak:0, sessionBest:0, timer:null, timeLeft:20, answered:false, results:[] };
+
+var catGrid = document.getElementById('catGrid');
+CATEGORIES.forEach(function(c){
+  var b=document.createElement('button');
+  b.className='cat'+(c.id===state.cat?' selected':'');
+  b.setAttribute('data-id',c.id);
+  b.innerHTML='<span class="cat-icon" style="background:'+c.bg+'">'+c.icon+'</span><span><h3>'+c.name+'</h3><p>'+c.desc+'</p></span><span class="count">'+c.count+'</span>';
+  b.addEventListener('click',function(){
+    state.cat=c.id;
+    document.querySelectorAll('.cat').forEach(function(el){el.classList.remove('selected')});
+    b.classList.add('selected');
+    document.getElementById('selectedLabel').textContent=c.name+' selected';
+  });
+  catGrid.appendChild(b);
+});
+
+function shuffle(arr){ var a=arr.slice(); for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)); var t=a[i];a[i]=a[j];a[j]=t;} return a; }
+function showView(id){ document.querySelectorAll('.view').forEach(function(v){v.classList.remove('active')}); document.getElementById(id).classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
+function toast(msg){ var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(function(){t.classList.remove('show')},2600); }
+
+function startQuiz(){
+  var pool = state.cat==='mix' ? QUESTIONS.slice() : QUESTIONS.filter(function(q){return q.cat===state.cat});
+  pool = shuffle(pool);
+  if(state.cat==='mix') pool = pool.slice(0,10);
+  state.questions = pool;
+  state.idx=0; state.score=0; state.correct=0; state.streak=0; state.bestStreak=0; state.results=[];
+  showView('view-quiz');
+  renderDots();
+  loadQuestion();
+}
+function renderDots(){
+  var d=document.getElementById('dots'); d.innerHTML='';
+  state.questions.forEach(function(_,i){ var s=document.createElement('span'); s.className='dot'; s.id='dot-'+i; d.appendChild(s); });
+}
+function loadQuestion(){
+  state.answered=false; state.timeLeft=20;
+  var q=state.questions[state.idx];
+  document.getElementById('qCounter').textContent='Question '+(state.idx+1)+' / '+state.questions.length;
+  document.getElementById('liveScore').textContent='Score: '+state.score;
+  document.getElementById('liveStreak').textContent='🔥 '+state.streak;
+  document.getElementById('streakPill').textContent='🔥 Streak: '+state.streak;
+  var catName={inventions:'Accidental Inventions',space:'Space & Universe',body:'Human Body',weird:'Weird Science'}[q.cat]||'Science';
+  document.getElementById('qTag').textContent=catName;
+  document.getElementById('qText').textContent=q.q;
+  document.getElementById('factBox').classList.remove('show');
+  document.getElementById('nextRow').classList.remove('show');
+  state.questions.forEach(function(_,i){ var el=document.getElementById('dot-'+i); if(el){ el.className='dot'+(i<state.results.length ? (state.results[i]?' done':' wrong') : (i===state.idx?' current':'')); }});
+  var optsEl=document.getElementById('opts'); optsEl.innerHTML='';
+  var order=shuffle(q.opts.map(function(_,i){return i}));
+  var letters=['A','B','C','D'];
+  order.forEach(function(origIdx,pos){
+    var btn=document.createElement('button');
+    btn.className='opt';
+    btn.innerHTML='<span class="letter">'+letters[pos]+'</span><span>'+q.opts[origIdx]+'</span>';
+    btn.addEventListener('click',function(){ answer(origIdx, btn); });
+    optsEl.appendChild(btn);
+  });
+  document.getElementById('nextBtn').textContent = state.idx===state.questions.length-1 ? 'See My Result →' : 'Next Question →';
+  startTimer();
+}
+function startTimer(){
+  clearInterval(state.timer);
+  var bar=document.getElementById('timerBar');
+  bar.style.width='100%'; bar.classList.remove('low');
+  document.getElementById('timerText').textContent='⏱️ 20s';
+  state.timer=setInterval(function(){
+    state.timeLeft--;
+    bar.style.width=Math.max(0,(state.timeLeft/20)*100)+'%';
+    if(state.timeLeft<=5) bar.classList.add('low');
+    document.getElementById('timerText').textContent='⏱️ '+Math.max(0,state.timeLeft)+'s';
+    if(state.timeLeft<=0){ clearInterval(state.timer); timeOut(); }
+  },1000);
+}
+function lockOptions(correctIdx){
+  var q=state.questions[state.idx];
+  document.querySelectorAll('.opt').forEach(function(btn){
+    btn.disabled=true;
+    // find by text match
+    var txt=btn.textContent.slice(1).trim();
+    if(txt===q.opts[correctIdx]) btn.classList.add('correct');
+  });
+}
+function answer(chosen, btn){
+  if(state.answered) return;
+  state.answered=true; clearInterval(state.timer);
+  var q=state.questions[state.idx];
+  var isCorrect = chosen===q.a;
+  document.querySelectorAll('.opt').forEach(function(b){ b.disabled=true; var txt=b.textContent.slice(1).trim(); if(txt===q.opts[q.a]) b.classList.add('correct'); });
+  if(!isCorrect && btn) btn.classList.add('wrong');
+  var gained=0;
+  if(isCorrect){
+    state.streak++; state.bestStreak=Math.max(state.bestStreak,state.streak); state.correct++;
+    gained = 50 + Math.round((state.timeLeft/20)*50) + (state.streak-1)*10;
+    state.score+=gained;
+  } else { state.streak=0; }
+  state.results.push(isCorrect);
+  document.getElementById('scorePop').textContent = isCorrect ? ('✅ +'+gained+' points'+(state.streak>=3?' • 🔥 x'+state.streak+' streak!':'')) : '❌ Not this time — read the story below';
+  document.getElementById('factText').textContent=q.fact;
+  document.getElementById('factBox').classList.add('show');
+  document.getElementById('nextRow').classList.add('show');
+  document.getElementById('liveScore').textContent='Score: '+state.score;
+  document.getElementById('liveStreak').textContent='🔥 '+state.streak;
+  document.getElementById('streakPill').textContent='🔥 Streak: '+state.streak;
+  var dot=document.getElementById('dot-'+state.idx); if(dot) dot.className='dot '+(isCorrect?'done':'wrong');
+}
+function timeOut(){
+  if(state.answered) return;
+  state.answered=true;
+  var q=state.questions[state.idx];
+  document.querySelectorAll('.opt').forEach(function(b){ b.disabled=true; var txt=b.textContent.slice(1).trim(); if(txt===q.opts[q.a]) b.classList.add('correct'); });
+  state.streak=0; state.results.push(false);
+  document.getElementById('scorePop').textContent='⏰ Time up! No points — the story is still worth it 👇';
+  document.getElementById('factText').textContent=q.fact;
+  document.getElementById('factBox').classList.add('show');
+  document.getElementById('nextRow').classList.add('show');
+  var dot=document.getElementById('dot-'+state.idx); if(dot) dot.className='dot wrong';
+}
+function nextQuestion(){
+  if(state.idx < state.questions.length-1){ state.idx++; loadQuestion(); }
+  else { finishQuiz(); }
+}
+function getRank(score, correct, total){
+  var pct = total? correct/total : 0;
+  if(pct>=0.9) return {label:'🏆 Einstein Level', trophy:'🏆', msg:'Outstanding. You didn\'t just answer — you understood the stories behind the science. Morrow Studio would hire you.'};
+  if(pct>=0.7) return {label:'🔬 Science Star', trophy:'🔬', msg:'Really strong! A couple of tricky ones got away, but your science instincts are sharp.'};
+  if(pct>=0.5) return {label:'🧪 Science Explorer', trophy:'🧪', msg:'Solid run! Half the battle in science is curiosity — and you clearly have it. One more round?'};
+  if(pct>=0.3) return {label:'🌱 Curious Mind', trophy:'🌱', msg:'Good start! Every scientist began by getting things wrong and asking why. The facts above are your cheat sheet for next time.'};
+  return {label:'🥼 Lab Rat (Rookie)', trophy:'🥼', msg:'Hey — even Fleming\'s great discovery started as a messy accident. Read the stories, then take your revenge round.'};
+}
+function finishQuiz(){
+  clearInterval(state.timer);
+  if(state.score>state.sessionBest){ state.sessionBest=state.score; document.getElementById('bestPill').textContent='🏆 Best: '+state.sessionBest; }
+  var r=getRank(state.score, state.correct, state.questions.length);
+  document.getElementById('trophy').textContent=r.trophy;
+  document.getElementById('rankLabel').textContent=r.label;
+  document.getElementById('resultMsg').textContent=r.msg;
+  document.getElementById('resultTitle').textContent = state.correct>=7 ? 'Brilliant Run!' : (state.correct>=4 ? 'Quiz Complete!' : 'Round Complete!');
+  document.getElementById('finalScore').textContent=state.score;
+  document.getElementById('finalCorrect').textContent=state.correct+'/'+state.questions.length;
+  document.getElementById('finalStreak').textContent=state.bestStreak;
+  document.getElementById('shareText').textContent='I scored '+state.score+' points ('+state.correct+'/'+state.questions.length+' correct) in the Science Quiz Game and ranked '+r.label+'! Can you beat me?';
+  showView('view-result');
+  if(state.correct>=7) launchConfetti();
+}
+function launchConfetti(){
+  var c=document.getElementById('confetti'), ctx=c.getContext('2d');
+  c.width=window.innerWidth; c.height=window.innerHeight;
+  var parts=[]; var colors=['#0e7a6b','#ffb703','#e63946','#2a9d8f','#ffffff'];
+  for(var i=0;i<90;i++){ parts.push({x:Math.random()*c.width,y:-20-Math.random()*c.height*0.4,w:7+Math.random()*7,h:10+Math.random()*8,vy:2+Math.random()*3,vx:-1+Math.random()*2,rot:Math.random()*Math.PI,col:colors[i%colors.length]}); }
+  var start=Date.now();
+  function frame(){
+    ctx.clearRect(0,0,c.width,c.height);
+    parts.forEach(function(p){ p.y+=p.vy; p.x+=p.vx; p.rot+=0.05; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.col; ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h); ctx.restore(); });
+    if(Date.now()-start<2600) requestAnimationFrame(frame); else ctx.clearRect(0,0,c.width,c.height);
+  }
+  frame();
+}
+
+document.getElementById('startBtn').addEventListener('click', startQuiz);
+document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+document.getElementById('againBtn').addEventListener('click', startQuiz);
+document.getElementById('changeBtn').addEventListener('click', startQuiz);
+document.getElementById('quitBtn').addEventListener('click', function(){ clearInterval(state.timer); startQuiz(); });
+document.getElementById('copyBtn').addEventListener('click', function(){
+  var text=document.getElementById('shareText').textContent + ' Play free: Science Quiz Game by Morrow Studio — https://www.youtube.com/channel/UClAHwHmjCctJJ40de538Pvw';
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){ toast('✅ Copied! Paste it anywhere to challenge friends'); }).catch(function(){ toast(text); });
+  } else {
+    var ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy'); toast('✅ Copied! Paste it anywhere to challenge friends');}catch(e){ toast(text); } document.body.removeChild(ta);
+  }
+});
+startQuiz();
+</script>
+</body>
+</html>
